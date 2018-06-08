@@ -115,34 +115,77 @@ void display(struct node *head)
 		cout<<"Empty \n";
 		return;
 	}
+	int count = 0;
 	while(head)
 	{
 		cout<<head->data;
+		count++;
 		head = head->next;
 	}
-}		
+	cout<<"\t\tCount "<<count<<endl;
+}
+
+void deleteList(struct node **head)
+{
+	struct node *temp = *head;
+	struct node *next;
+	while(temp != NULL)
+	{
+		next = temp->next;
+		free(temp);
+		temp = next;
+	}
+	*head = NULL;
+}	
+int getCount(struct node *head)
+{
+	if(!head)
+		return 0;
+	return 1+getCount(head->next);
+}	
+int search(struct node *head,int x)
+{
+	struct node *current = head;
+	int count = 0;
+	while(current != NULL)
+	{
+		if(current->data == x)
+			return count;
+		count++;
+		current = current->next;
+	}
+	return -1;
+}	
+
+void printMid(struct node *head)
+{
+	struct node *fast = head;
+	struct node *slow = head;
+	if(head)
+	{
+		while(fast != NULL && fast->next != NULL)
+		{
+			fast = fast->next->next;
+			slow = slow->next;
+		}
+	}
+	cout<<"Mid node is "<<slow->data<<endl;
+}
 int main()
 {
 	struct node *head = NULL;
+	deleteList(&head);
 	display(head);
 	insertFront(&head,5);
         insertFront(&head,6);
         insertEnd(&head,8);
-        insertEnd(&head,1);
-	insertFront(&head,2);
-	insertFront(&head,3);
+	//display(head);cout<<endl;
+        //insertEnd(&head,1);
+	//insertFront(&head,2);
+	//insertFront(&head,3);
 	display(head);cout<<endl;
-	deletePos(&head,10);
-	display(head);cout<<endl;
-	display(head);cout<<endl;
-	deleteBack(&head);
-	display(head);cout<<endl;
-	deleteBack(&head);
-	display(head);cout<<endl;
-	deleteBack(&head);
-	display(head);cout<<endl;
-	deleteBack(&head);
-	display(head);cout<<endl;
+	cout<<"\n\n";
+	printMid(head);
 	return 0;
 }
 						
