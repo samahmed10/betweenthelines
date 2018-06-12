@@ -9,7 +9,7 @@ struct node
 	struct node *next;
 };
 
-struct node *newNode(int data)
+struct node *newnode(int data)
 {
 	struct node *newnode = (struct node *)malloc(sizeof(struct node));
 	newnode->data = data;
@@ -19,21 +19,21 @@ struct node *newNode(int data)
 
 void insertFront(struct node **head,int data)
 {
-	struct node *newnode = newNode(data);
-	newnode->next = *head;
-	*head = newnode;
+	struct node *newNode = newnode(data);
+	newNode->next = *head;
+	*head = newNode;
 }
 
 void insertEnd(struct node **head,int data)
 {
 	if(*head == NULL)
-		*head = newNode(data);
+		*head = newnode(data);
 	else
 	{
 		struct node *temp = *head;
 		while(temp->next != NULL)
 			temp = temp->next;
-		temp->next = newNode(data);
+		temp->next = newnode(data);
 	}
 }
 
@@ -318,7 +318,7 @@ void removeDuplicates(struct node *head)
 }
 
 //https://www.geeksforgeeks.org/swap-nodes-in-a-linked-list-without-swapping-data/
-void swapNodes(struct node **head,int x,int y)
+void swapnodes(struct node **head,int x,int y)
 {
 	struct node *prevX=NULL,*currX=*head;
 	while(currX && currX->data != x)
@@ -383,24 +383,79 @@ void intersection(struct node **head1, struct node **head2,struct node **head3)
     }
 }
 
+int getIntersectionPoint(struct node *head1,struct node *head2)
+{
+	int c1 = getCount(head1);
+	int c2 = getCount(head2);
+	struct node *temp1 = head1;
+	struct node *temp2 = head2;
+	{
+		
+	};
+	if(c1 > c2)
+	{
+		for(int i=1;i<=c1-c2;i++)
+		{
+			temp1 = temp1->next;
+		}
+		while(temp1 && temp2)
+		{
+			if(temp1 == temp2)
+				return temp1->data;
+			temp1 = temp1->next;
+			temp2 = temp2->next;
+		}
+	}
+	else
+	{
+		for(int i=1;i<=c2-c1;i++)
+		{
+			temp2 = temp2->next;
+		}
+		while(temp1 && temp2)
+		{
+			if(temp1 == temp2)
+				return temp1->data;
+			temp1 = temp1->next;
+			temp2 = temp2->next;
+		}
+
+	}
+	return -1;
+}
+
 int main()
 {
-	struct node *head1 = newNode(1);
-	head1->next = newNode(2);
-	head1->next->next = newNode(3);
-	head1->next->next->next = newNode(4);
-	head1->next->next->next->next = newNode(5);
-	display(head1);
-
-	struct node *head2 = newNode(1);
-	head2->next = newNode(3);
-	head2->next->next = newNode(5);
-	display(head2);
-	struct node *head3 = NULL;
-	intersection(&head1,&head2,&head3);
-
-	cout<<"\nIntersection of two lists is : ";
-	display(head3);
+  struct node* newNode;
+  struct node* head1 = (struct node*) malloc(sizeof(struct node));
+  head1->data  = 10;
+ 
+  struct node* head2 =
+            (struct node*) malloc(sizeof(struct node));
+  head2->data  = 3;
+ 
+  newNode = (struct node*) malloc (sizeof(struct node));
+  newNode->data = 6;
+  head2->next = newNode;
+ 
+  newNode = (struct node*) malloc (sizeof(struct node));
+  newNode->data = 9;
+  head2->next->next = newNode;
+ 
+  newNode = (struct node*) malloc (sizeof(struct node));
+  newNode->data = 15;
+  head1->next = newNode;
+  head2->next->next->next  = newNode;
+ 
+  newNode = (struct node*) malloc (sizeof(struct node));
+  newNode->data = 30;
+  head1->next->next= newNode;
+ 
+  head1->next->next->next = NULL;
+  display(head1);
+  display(head2);
+ 
+  cout<<"\n The node of intersection is "<<getIntersectionPoint(head1, head2);
 
 
 	return 0;
