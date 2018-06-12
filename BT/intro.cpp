@@ -29,7 +29,7 @@ void postorder(struct node *root)
 	{
 		postorder(root->left);	
 		postorder(root->right);
-		cout<<root->right<<endl;
+		cout<<root->data<<endl;
 	}
 }
 
@@ -142,26 +142,40 @@ void deletenode(struct node *root,int key)
 	deleteDeepest(root,temp);
 }
 
+//https://www.geeksforgeeks.org/construct-tree-from-given-inorder-and-preorder-traversal/ 
+// Construct tree from given inorder and preorder traversals
+int search(int in[],int start,int end,int data)
+{
+	for(int i=start;i<=end;i++)
+		if(in[i] == data)
+			return i;
+	return -1;
+}
+struct node *buildTree(int in[],int pre[],int start,int end)
+{
+	static int preIndex = 0;
+	if(start > end)
+		return NULL;
+	struct node* root = newNode(pre[preIndex++]);
+	if(start == end)
+		return root;
+	int rootIndexinInorder = search(in,start,end,root->data);
+	root->left = buildTree(in,pre,start,rootIndexinInorder-1);
+	root->right = buildTree(in,pre,rootIndexinInorder+1,end);
+	return root;
+}
 	
 	
 int main()
 {
-	 struct node* root = newNode(10);
-    root->left = newNode(11);
-    root->left->left = newNode(7);
-    root->left->right = newNode(12);
-    root->right = newNode(9);
-    root->right->left = newNode(15);
-    root->right->right = newNode(8);
+  int in[] = {4, 2, 5, 1, 6, 3};
+  int pre[] = {1, 2, 3, 4, 5, 6};
+  int len = sizeof(in)/sizeof(in[0]);
+  struct node *root = buildTree(in, pre, 0, len - 1);
  
-    cout << "Inorder traversal : "<<endl;
-    inorder(root);
-    cout<<"Preorder traversal :"<<endl;
-    preorder(root);
-    cout<<"Postorder traversal :"<<endl;
-    postorder(root);
-    cout<<"Levelorder traversal :"<<endl;
-    levelorder(root);
+  /* Let us test the built tree by printing Insorder traversal */
+  cout<<"Inorder traversal of the constructed tree is \n";
+  inorder(root);
 
 
  

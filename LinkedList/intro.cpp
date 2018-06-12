@@ -1,5 +1,6 @@
 #include<iostream>
 #include<stdlib.h>	
+#include<bits/stdc++.h>
 using namespace std;
 
 struct node
@@ -271,24 +272,137 @@ int checkPalindrome(struct node *head)
 	}
 	return res;
 }
-				
+
+void removeDuplicatesFromSorted(struct node *head)
+{
+	struct node *current = head;
+	struct node *next_node;
+	if(!current)
+		return;
+	while(current->next)
+	{
+		if(current->data == current->next->data)
+		{
+			next_node = current->next->next;
+			free(current->next);
+			current->next = next_node;
+		}
+		else
+			current = current->next;
+	}
+}
+//https://www.geeksforgeeks.org/remove-duplicates-from-an-unsorted-linked-list/
+//Remove duplicates from unsorted linked list
+
+void removeDuplicates(struct node *head)
+{
+	if(!head)
+		return;
+	struct node *curr = head;
+	struct node *prev = NULL;
+	unordered_set<int> s;
+	while(curr != NULL)
+	{
+		if(s.find(curr->data) != s.end())
+		{
+			prev->next = curr->next;
+			free(curr);
+		}
+		else
+		{
+			s.insert(curr->data);
+			prev = curr;
+		}
+		curr = prev->next;
+	}
+}
+
+//https://www.geeksforgeeks.org/swap-nodes-in-a-linked-list-without-swapping-data/
+void swapNodes(struct node **head,int x,int y)
+{
+	struct node *prevX=NULL,*currX=*head;
+	while(currX && currX->data != x)
+	{
+		prevX = currX;
+		currX = currX->next;
+	}
+
+	struct node *prevY=NULL,*currY=*head;
+	while(currY && currY->data != y)
+	{
+		prevY = currY;
+		currY = currY->next;
+	}
+
+	if(!prevX)
+		*head = currY;
+	else
+		prevX->next = currY;
+
+	if(!prevY)
+		*head = currX;
+	else
+		prevY->next = currX;
+
+	struct node *temp = currX->next;
+	currX->next = currY->next;
+	currY->next = temp;
+
+}
+
+// https://www.geeksforgeeks.org/pairwise-swap-elements-of-a-given-linked-list/
+void swapPairWise(struct node *head)
+{
+	struct node *temp = head;
+	while(temp && temp->next)
+	{
+		int t = temp->data;
+		temp->data = temp->next->data;
+		temp->next->data = t;
+		temp = temp->next->next;
+	}
+}
+
+//https://www.geeksforgeeks.org/intersection-of-two-sorted-linked-lists/
+void intersection(struct node **head1, struct node **head2,struct node **head3)
+{
+    // Your Code Here
+    struct node *temp1 = *head1;struct node *temp2 = *head2;
+    while(temp1 && temp2)
+    {
+        if(temp1->data == temp2->data)
+        {
+            insertEnd(head3,temp1->data);
+            temp1 = temp1->next;
+            temp2 = temp2->next;
+        }
+        else if(temp1->data < temp2->data)
+            temp1 = temp1->next;
+        else
+            temp2 = temp2->next;
+    }
+}
+
 int main()
 {
-	struct node *head = NULL;
-	deleteList(&head);
-	display(head);
-	insertFront(&head,7);
-        insertFront(&head,4);
-        insertEnd(&head,6);
-	display(head);
-	reverse(&head);
-	display(head);
-//	head->next->next->next = head;
-	detectloop(head);
-	if(checkPalindrome(head))
-		cout<<"PALINDROME";
-	else
-		cout<<"NOT A PALINDROME";
+	struct node *head1 = newNode(1);
+	head1->next = newNode(2);
+	head1->next->next = newNode(3);
+	head1->next->next->next = newNode(4);
+	head1->next->next->next->next = newNode(5);
+	display(head1);
+
+	struct node *head2 = newNode(1);
+	head2->next = newNode(3);
+	head2->next->next = newNode(5);
+	display(head2);
+	struct node *head3 = NULL;
+	intersection(&head1,&head2,&head3);
+
+	cout<<"\nIntersection of two lists is : ";
+	display(head3);
+
+
 	return 0;
 }
 						
