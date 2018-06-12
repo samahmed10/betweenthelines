@@ -142,42 +142,141 @@ void deletenode(struct node *root,int key)
 	deleteDeepest(root,temp);
 }
 
-//https://www.geeksforgeeks.org/construct-tree-from-given-inorder-and-preorder-traversal/ 
-// Construct tree from given inorder and preorder traversals
-int search(int in[],int start,int end,int data)
+//https://www.geeksforgeeks.org/check-if-a-given-binary-tree-is-sumtree/
+//sum of a node should be equal to sum of left and right subtrees 
+// O(n^2)
+
+int sum(struct node *root)
 {
-	for(int i=start;i<=end;i++)
-		if(in[i] == data)
-			return i;
-	return -1;
+	if(!root)
+		return 0;
+	return sum(root->left)+root->data+sum(root->right);
 }
-struct node *buildTree(int in[],int pre[],int start,int end)
+
+int checkSumTree(struct node *root)
 {
-	static int preIndex = 0;
-	if(start > end)
-		return NULL;
-	struct node* root = newNode(pre[preIndex++]);
-	if(start == end)
-		return root;
-	int rootIndexinInorder = search(in,start,end,root->data);
-	root->left = buildTree(in,pre,start,rootIndexinInorder-1);
-	root->right = buildTree(in,pre,rootIndexinInorder+1,end);
-	return root;
+	if(!root || !root->left || !root->right)
+		return 1;
+	int lsum = sum(root->left);
+	int rsum = sum(root->right);
+
+	if(lsum+rsum == root->data && checkSumTree(root->left) && checkSumTree(root->right))
+	{
+		return 1;
+	}
+
+	return 0;
 }
+
+//Same problem with O(n)
+int isleaf(struct node *root)
+{
+	if(!root)
+		return 0;
+	if(!root->left && !root->right)
+		return 1;
+	return 0;
+}
+
+int checkSumTree2(struct node *root)
+{
+	if(!root || isleaf(root))
+		return 1;
+	if(checkSumTree2(root->left) && checkSumTree2(root->right))
+	{
+		int ls,rs;
+
+		if(!root->left)
+			ls = 0;
+		else if(isleaf(root->left))
+			ls = root->left->data;
+		else
+			ls = 2 * root->left->data;
+
+		if(!root->right)
+			rs = 0;
+		else if(isleaf(root->right))
+			rs = root->right->data;
+		else
+			rs = 2 * root->right->data;
+
+		return (ls+rs == root->data);
+
+	}	
 	
+}
+
+//https://www.geeksforgeeks.org/check-two-nodes-cousins-binary-tree/
+//Check if two nodes are cousins 
+//1. should be on the same level 2. should not be siblings
+
+int isSibling(struct node *root,struct node *a,struct node *b)
+{
+	if(!root)
+		return 0;
+	return ((root->left == a && root->right == b)
+			|| (root->left == b && root->right == a)
+			|| (isSibling(root->left,a,b))
+			|| (isSibling(root->right,a,b)));
+}
+
+int level(struct node *root,struct node *a,int lvl)
+{
+	if(!root)
+		return -1;
+	if(root == a)
+		return lvl;
+	int l = level(root->left,a,lvl+1);
+	if(l)
+		return l;
+	return level(root->right,a,lvl+1);
+}	
+
+int isCousin(struct node *root,struct node *a,struct node *b)
+{
+	return (level(root,a,1) == level(root,b,1) && !isSibling(root,a,b));
+}
+
+//https://www.geeksforgeeks.org/check-leaves-level/
+//check if all leaves are at same level
+
+
+int checkEachNode(struct node *root,int level,int *leafLevel)
+{
+	if(!root)
+		return 1;
+	if(!root->left && !root->right)
+	{
+		if(*leafLevel == 0)
+		{
+			*leafLevel = level;
+			return 1;
+		}
+		else
+			return (level == *leafLevel);
+	}
+	return checkEachNode(root->left,level+1,leafLevel) && checkEachNode(root->right,level+1,leafLevel);
+}
+int checkLeavesLevel(struct node *root)
+{
+	int level = 0,leafLevel = 0;
+	return checkEachNode(root,level,&leafLevel);
+}
+
+
 	
 int main()
 {
-  int in[] = {4, 2, 5, 1, 6, 3};
-  int pre[] = {1, 2, 3, 4, 5, 6};
-  int len = sizeof(in)/sizeof(in[0]);
-  struct node *root = buildTree(in, pre, 0, len - 1);
- 
-  /* Let us test the built tree by printing Insorder traversal */
-  cout<<"Inorder traversal of the constructed tree is \n";
-  inorder(root);
 
-
- 
+    struct node *root = newNode(12);
+    root->left = newNode(5);
+    root->left->left = newNode(3);
+    root->left->right = newNode(9);
+    root->left->left->left = newNode(1);
+    root->left->right->left = newNode(1);
+    if (checkLeavesLevel(root))
+        cout<<"Leaves are at same level\n";
+    else
+        cout<<"Leaves are not at same level\n";
     return 0;
 }
